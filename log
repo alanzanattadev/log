@@ -3,7 +3,11 @@
 require 'yaml'
 require 'colorize'
 
-config = YAML.load_file(ARGV[0])
+$config = YAML.load_file(ARGV[0])
+$offset = 300
+if ARGV[1] != nil
+  $offset = ARGV[1].to_i
+end
 
 class LogFile
   def initialize(name, color, io, fd)
@@ -38,10 +42,11 @@ logFileArray = []
 fdArray = []
 ioArray = []
 
-config["files"].each do |file|
+$config["files"].each do |file|
   fd = IO.sysopen file["name"], "r"
   fdArray.push fd
   io = IO.new fd
+  io.seek -$offset, IO::SEEK_END
   ioArray.push io
   logFileArray.push(LogFile.new(file["name"], file["color"], io, fd))
 end
