@@ -28,6 +28,10 @@ class LogFile
   def io()
     @io
   end
+
+  def name()
+    @name
+  end
 end
 
 logFileArray = []
@@ -49,7 +53,7 @@ while true do
     if str != "" && str != nil
       logFileArray.each do |logFile|
         if logFile.io == io
-          puts str.send(logFile.color)
+          puts (logFile.name + ": " + str).send(logFile.color)
         end
       end
     end
