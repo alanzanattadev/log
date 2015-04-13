@@ -1,0 +1,58 @@
+#!/usr/bin/ruby
+
+require 'yaml'
+require 'colorize'
+
+config = YAML.load_file(ARGV[0])
+
+class LogFile
+  def initialize(name, color, io, fd)
+    @color = color
+    @name = name
+    @io = io
+    @fd = fd
+  end
+
+  def read(size)
+    return @io.read_nonblock size
+  end
+
+  def color()
+    @color
+  end
+
+  def fd()
+    @fd
+  end
+
+  def io()
+    @io
+  end
+end
+
+logFileArray = []
+fdArray = []
+ioArray = []
+
+config["files"].each do |file|
+  fd = IO.sysopen file["name"], "r"
+  fdArray.push fd
+  io = IO.new fd
+  ioArray.push io
+  logFileArray.push(LogFile.new(file["name"], file["color"], io, fd))
+end
+
+while true do
+  select(ioArray)
+  ioArray.each do |io|
+    str = io.gets
+    if str != "" && str != nil
+      logFileArray.each do |logFile|
+        if logFile.io == io
+          puts str.send(logFile.color)
+        end
+      end
+    end
+  end
+  sleep 0.010
+end

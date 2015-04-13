@@ -1,0 +1,7 @@
+---
+
+  files:
+    - name: /var/log/wpa_supplicant.log
+      color: blue
+    - name: /var/log/boot.log
+      color: red
