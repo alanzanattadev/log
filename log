@@ -3,7 +3,22 @@
 require 'yaml'
 require 'colorize'
 
-$config = YAML.load_file(ARGV[0])
+$defaultFile = ".log.yml"
+$defaultLocation = File.expand_path("~")
+$defaultPath = $defaultLocation + "/" + $defaultFile
+
+if ARGV[0] == nil
+  if File.exist?($defaultPath)
+    puts "reading config file at " + $defaultPath + " ..."
+    $config = YAML.load_file($defaultPath)
+  else
+    puts "Usage : log [filename]"
+    exit(1)
+  end
+else
+  $config = YAML.load_file(ARGV[0])
+end
+
 $offset = 300
 if ARGV[1] != nil
   $offset = ARGV[1].to_i
@@ -46,7 +61,11 @@ $config["files"].each do |file|
   fd = IO.sysopen file["name"], "r"
   fdArray.push fd
   io = IO.new fd
-  io.seek -$offset, IO::SEEK_END
+  begin
+    io.seek -$offset, IO::SEEK_END
+  rescue
+
+  end
   ioArray.push io
   logFileArray.push(LogFile.new(file["name"], file["color"], io, fd))
 end
