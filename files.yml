@@ -3,5 +3,9 @@
   files:
     - name: /var/log/wpa_supplicant.log
       color: cyan
-    - name: /var/log/boot.log
+    - name: /var/log/secure
+      color: red
+    - name: /var/log/messages
+      color: magenta
+    - name: /var/log/firewalld
       color: green
